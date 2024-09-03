@@ -1,0 +1,82 @@
+---
+title: "HW_Lab 1 TSA"
+author: "Maria Isaac"
+output: 
+  pdf_document: 
+    latex_engine: lualatex
+---
+
+```{r}
+# necessary library
+library(astsa)
+```
+
+```{r}
+# Function to generate and plot white noise, ACF, and autocovariance
+analyze_white_noise <- function(n) {
+  # Generating white noise
+  wn <- rnorm(n)
+  
+  # plotting layout (2 plots: trajectory and correlogram)
+  par(mfrow=c(2,1))
+  
+  # Plotting white noise trajectory
+  plot(wn, type='l', ylab="White Noise", main=paste("Trajectory of White Noise (n =", n, ")"))
+  points(wn)
+  
+  # Plotting ACF (correlogram)
+  acf(wn, lag.max=10, plot=TRUE, main=paste("Correlogram (n =", n, ")"))
+  
+  # Displaying first 10 autocorrelations and autocovariances
+  acf_values <- acf(wn, lag.max=10, plot=FALSE)$acf[1:10]
+  acf_cov <- acf(wn, type="covariance", lag.max=10, plot=FALSE)$acf[1:10]
+  
+  # Printing autocorrelation and autocovariance values
+  print(paste("Autocorrelations for n =", n, ":"))
+  print(acf_values)
+  print(paste("Autocovariances for n =", n, ":"))
+  print(acf_cov)
+}
+
+# Analyzing for different sample sizes
+sample_sizes <- c(10, 50, 100, 10000)
+for (n in sample_sizes) {
+  analyze_white_noise(n)
+}
+```
+### Correlogram Patterns
+#As the sample size increases, the correlograms become more stable. The white noise process is better represented, and autocorrelations approach zero. This trend highlights the importance of sample size in estimating autocorrelations.
+
+###Effect of Variance on ACF
+#Changing the variance (e.g., generating data from N(0, σ^2 ≠ 1)) will alter the autocovariances, but the ACF (autocorrelation function) will remain unchanged due to its scale-invariant nature.
+
+```{r}
+# Generate white noise with variance different from 1
+wn_var2 <- rnorm(100, mean=0, sd=2)  # Variance = 4 (σ^2 = 2^2)
+
+# Set up plotting layout
+par(mfrow=c(2,1))
+
+# Plot trajectory of white noise with variance = 4
+plot(wn_var2, type='l', ylab="White Noise", main="Trajectory of White Noise (σ^2 = 4)")
+points(wn_var2)
+
+# Plot ACF (correlogram) for white noise with variance = 4
+acf(wn_var2, lag.max=10, plot=TRUE, main="Correlogram (σ^2 = 4)")
+
+# Display first 10 autocorrelations and autocovariances
+acf_values_var2 <- acf(wn_var2, lag.max=10, plot=FALSE)$acf[1:10]
+acf_cov_var2 <- acf(wn_var2, type="covariance", lag.max=10, plot=FALSE)$acf[1:10]
+
+print("Autocorrelations for σ^2 = 4:")
+print(acf_values_var2)
+print("Autocovariances for σ^2 = 4:")
+print(acf_cov_var2)
+```
+
+### Conclusion
+
+#Correlograms Pattern: As the sample size increases, the correlograms stabilize, and the autocorrelations approach zero, accurately depicting white noise behavior.
+
+#Effect of Variance on ACF: The ACF remains the same for different variances, demonstrating its scale invariance, while autocovariances change with variance.
+
